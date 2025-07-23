@@ -29,17 +29,19 @@ const rollAroundCap = (cap, ball) => {
   );
 
   let impactHeadingAngle = impactAngle - heading;
-  const velocityMagnitude = distance2D (
+
+  const velocityMagnitude = distance2D(
     { x: 0, y: 0 },
     { x: ball.velocityX, y: ball.velocityY }
   );
 
-  const velocityMagnitudeDiagonalToTheImpact = Math.sin(impactHeadingAngle) * velocityMagnitude;
+  const velocityMagnitudeDiagonalToTheImpact =
+    Math.sin(impactHeadingAngle) * velocityMagnitude;
 
   const closestDistance = wallW / 2 + ballSize / 2;
 
   const rotationAngle = Math.atan(
-    velocityMagnitudeDiagonalToTheImpact / closestDistance 
+    velocityMagnitudeDiagonalToTheImpact / closestDistance
   );
 
   const deltaFromCap = {
@@ -65,7 +67,7 @@ const slow = (number, difference) => {
 
 const mazeElement = document.getElementById("maze");
 const joystickHeadElement = document.getElementById("joystick-head");
-const noteElement = document.getElementById("note");
+const noteElement = document.getElementById("note"); 
 
 let hardMode = false;
 let previousTimestamp;
@@ -78,8 +80,8 @@ let frictionX;
 let frictionY;
 
 const pathW = 25;
-const wallW = 10;
-const ballSize = 10;
+const wallW = 10; 
+const ballSize = 10; 
 const holeSize = 18;
 
 const debugMode = false;
@@ -89,17 +91,16 @@ let ballElements = [];
 let holeElements = [];
 
 resetGame();
-
 balls.forEach(({ x, y }) => {
   const ball = document.createElement("div");
-  ball.setAttribute = ("class", "ball");
+  ball.setAttribute("class", "ball");
   ball.style.cssText = `left: ${x}px; top: ${y}px; `;
 
   mazeElement.appendChild(ball);
   ballElements.push(ball);
 });
 
-const wall = [
+const walls = [
   { column: 0, row: 0, horizontal: true, length: 10 },
   { column: 0, row: 0, horizontal: false, length: 9 },
   { column: 0, row: 9, horizontal: true, length: 10 },
@@ -176,12 +177,12 @@ walls.forEach(({ x, y, horizontal, length }) => {
   const wall = document.createElement("div");
   wall.setAttribute("class", "wall");
   wall.style.cssText = `
-  left: ${x}px;
-  top: ${y}px;
-  width: ${wallW}px;
-  height: ${length}px;
-  transform: rotate(${horizontal ? -90 : 0}deg);
-  `;
+      left: ${x}px;
+      top: ${y}px;
+      width: ${wallW}px;
+      height: ${length}px;
+      transform: rotate(${horizontal ? -90 : 0}deg);
+    `;
 
   mazeElement.appendChild(wall);
 });
@@ -208,36 +209,36 @@ joystickHeadElement.addEventListener("mousedown", function (event) {
     window.requestAnimationFrame(main);
     noteElement.style.opacity = 0;
     joystickHeadElement.style.cssText = `
-    animation: none;
-    cursor: grabbing;
-    `;
+        animation: none;
+        cursor: grabbing;
+      `;
   }
 });
 
 window.addEventListener("mousemove", function (event) {
   if (gameInProgress) {
     const mouseDeltaX = -Math.minmax(mouseStartX - event.clientX, 15);
-    const mousedeltaY = -Math.minmax(mouseStartY - event.clientY, 15);
+    const mouseDeltaY = -Math.minmax(mouseStartY - event.clientY, 15);
 
     joystickHeadElement.style.cssText = `
-    left: ${mouseDeltaX}px;
-    top: ${mouseDeltaY}px;
-    animation: none;
-    cursor: grabbing;
-    `;
+        left: ${mouseDeltaX}px;
+        top: ${mouseDeltaY}px;
+        animation: none;
+        cursor: grabbing;
+      `;
 
-    const rotationY = mouseDeltaX * 0.8;
+    const rotationY = mouseDeltaX * 0.8; 
     const rotationX = mouseDeltaY * 0.8;
 
     mazeElement.style.cssText = `
-    transform: rotateY(${rotationY}deg) rotateX(${-rotationX}deg)
-    `;
+        transform: rotateY(${rotationY}deg) rotateX(${-rotationX}deg)
+      `;
 
     const gravity = 2;
-    const friction = 0.01;
+    const friction = 0.01; 
 
-    accelerationX = gravity * Math.sin((rotationY / 100) * Math.PI);
-    accelerationY = gravity * Math.sin((rotationX / 100) * Math.PI);
+    accelerationX = gravity * Math.sin((rotationY / 180) * Math.PI);
+    accelerationY = gravity * Math.sin((rotationX / 180) * Math.PI);
     frictionX = gravity * Math.cos((rotationY / 180) * Math.PI) * friction;
     frictionY = gravity * Math.cos((rotationX / 180) * Math.PI) * friction;
   }
@@ -245,20 +246,16 @@ window.addEventListener("mousemove", function (event) {
 
 window.addEventListener("keydown", function (event) {
   if (![" ", "H", "h", "E", "e"].includes(event.key)) return;
-
   event.preventDefault();
-
   if (event.key == " ") {
     resetGame();
     return;
   }
-
   if (event.key == "H" || event.key == "h") {
     hardMode = true;
     resetGame();
     return;
   }
-
   if (event.key == "E" || event.key == "e") {
     hardMode = false;
     resetGame();
@@ -272,27 +269,27 @@ function resetGame() {
   mouseStartX = undefined;
   mouseStartY = undefined;
   accelerationX = undefined;
-  accerlerationY = undefined;
+  accelerationY = undefined;
   frictionX = undefined;
   frictionY = undefined;
 
   mazeElement.style.cssText = `
-  transform: rotateY(0deg) rotateX(0deg)
-  `;
+      transform: rotateY(0deg) rotateX(0deg)
+    `;
 
   joystickHeadElement.style.cssText = `
-  left: 0,
-  top: 0,
-  animation: glow;
-  cursor: grab;
-  `;
+      left: 0;
+      top: 0;
+      animation: glow;
+      cursor: grab;
+    `;
 
   if (hardMode) {
     noteElement.innerHTML = `Click the joystick to start!
-    <p>Hard mode, Avoid black holes. Back to easy mode? Press E</p>`;
+        <p>Hard mode, Avoid black holes. Back to easy mode? Press E</p>`;
   } else {
     noteElement.innerHTML = `Click the joystick to start!
-    <p>Move every ball to the center. Ready for hard mode? Press H</p>`;
+        <p>Move every ball to the center. Ready for hard mode? Press H</p>`;
   }
   noteElement.style.opacity = 1;
 
@@ -300,12 +297,12 @@ function resetGame() {
     { column: 0, row: 0 },
     { column: 9, row: 0 },
     { column: 0, row: 8 },
-    { column: 9, row: 8 },
+    { column: 9, row: 8 }
   ].map((ball) => ({
     x: ball.column * (wallW + pathW) + (wallW / 2 + pathW / 2),
     y: ball.row * (wallW + pathW) + (wallW / 2 + pathW / 2),
     velocityX: 0,
-    velocityY: 0 
+    velocityY: 0
   }));
 
   if (ballElements.length) {
@@ -318,7 +315,6 @@ function resetGame() {
     mazeElement.removeChild(holeElement);
   });
   holeElements = [];
-
   if (hardMode) {
     holes.forEach(({ x, y }) => {
       const ball = document.createElement("div");
@@ -326,7 +322,7 @@ function resetGame() {
       ball.style.cssText = `left: ${x}px; top: ${y}px; `;
 
       mazeElement.appendChild(ball);
-      holeElements.push(balls);
+      holeElements.push(ball);
     });
   }
 }
@@ -341,7 +337,6 @@ function main(timestamp) {
   }
 
   const maxVelocity = 1.5;
-
   const timeElapsed = (timestamp - previousTimestamp) / 16;
 
   try {
@@ -357,18 +352,19 @@ function main(timestamp) {
         } else {
           ball.velocityX = ball.velocityX + velocityChangeX;
           ball.velocityX = Math.max(Math.min(ball.velocityX, 1.5), -1.5);
-          ball.velocityX = ball.velocityX - Math.sign(velocityChangeX) * frictionDeltaX;
+          ball.velocityX =
+            ball.velocityX - Math.sign(velocityChangeX) * frictionDeltaX;
           ball.velocityX = Math.minmax(ball.velocityX, maxVelocity);
         }
 
         if (velocityChangeY == 0) {
           ball.velocityY = slow(ball.velocityY, frictionDeltaY);
         } else {
-          ball.veloctyY = ball.velocityY + velocityChangeY;
-          ball.velocityY = ball.velocityY - Math.sign(velocityChangeY) * frictionDeltaY;
+          ball.velocityY = ball.velocityY + velocityChangeY;
+          ball.velocityY =
+            ball.velocityY - Math.sign(velocityChangeY) * frictionDeltaY;
           ball.velocityY = Math.minmax(ball.velocityY, maxVelocity);
         }
-
         ball.nextX = ball.x + ball.velocityX;
         ball.nextY = ball.y + ball.velocityY;
 
@@ -384,34 +380,31 @@ function main(timestamp) {
                 x: wall.x,
                 y: wall.y
               };
-
               const wallEnd = {
                 x: wall.x + wall.length,
                 y: wall.y
               };
 
               if (
-                ball.nextX + ballSize / 2 >= wallStart.x - wallW / 2 && 
-                ball.nextX < wallStart.x 
+                ball.nextX + ballSize / 2 >= wallStart.x - wallW / 2 &&
+                ball.nextX < wallStart.x
               ) {
                 const distance = distance2D(wallStart, {
                   x: ball.nextX,
-                  y: ball.nextY 
+                  y: ball.nextY
                 });
-
                 if (distance < ballSize / 2 + wallW / 2) {
-                  if (debugMode && wi > 4) 
-                    console.warn("too close h head", distance, ball); 
-
+                  if (debugMode && wi > 4)
+                    console.warn("too close h head", distance, ball);
                   const closest = closestItCanBe(wallStart, {
                     x: ball.nextX,
-                    y: ball.nextY 
+                    y: ball.nextY
                   });
                   const rolled = rollAroundCap(wallStart, {
                     x: closest.x,
                     y: closest.y,
                     velocityX: ball.velocityX,
-                    velocityY: ball.velocityY 
+                    velocityY: ball.velocityY
                   });
 
                   Object.assign(ball, rolled);
@@ -419,26 +412,25 @@ function main(timestamp) {
               }
 
               if (
-                ball.nextX - ballSize / 2 <= wallEnd.x + wallW / 2 && 
-                ball.nextX > wallEnd.x 
+                ball.nextX - ballSize / 2 <= wallEnd.x + wallW / 2 &&
+                ball.nextX > wallEnd.x
               ) {
                 const distance = distance2D(wallEnd, {
                   x: ball.nextX,
-                  y: ball.nextY 
+                  y: ball.nextY
                 });
                 if (distance < ballSize / 2 + wallW / 2) {
                   if (debugMode && wi > 4)
                     console.warn("too close h tail", distance, ball);
-
                   const closest = closestItCanBe(wallEnd, {
                     x: ball.nextX,
-                    y: ball.nextY 
+                    y: ball.nextY
                   });
                   const rolled = rollAroundCap(wallEnd, {
                     x: closest.x,
                     y: closest.y,
                     velocityX: ball.velocityX,
-                    velocityY: ball.velocityY 
+                    velocityY: ball.velocityY
                   });
 
                   Object.assign(ball, rolled);
@@ -451,11 +443,10 @@ function main(timestamp) {
                 } else {
                   ball.nextY = wall.y + wallW / 2 + ballSize / 2;
                 }
-
                 ball.y = ball.nextY;
                 ball.velocityY = -ball.velocityY / 3;
 
-                if (debugMode && wi > 4) 
+                if (debugMode && wi > 4)
                   console.error("crossing h line, HIT", ball);
               }
             }
@@ -464,38 +455,36 @@ function main(timestamp) {
               ball.nextX + ballSize / 2 >= wall.x - wallW / 2 &&
               ball.nextX - ballSize / 2 <= wall.x + wallW / 2
             ) {
+
               const wallStart = {
                 x: wall.x,
-                y: wall.y 
+                y: wall.y
               };
               const wallEnd = {
                 x: wall.x,
-                y: wall.y + wall.length 
+                y: wall.y + wall.length
               };
 
               if (
                 ball.nextY + ballSize / 2 >= wallStart.y - wallW / 2 &&
-                ball.nextY < wallStart.y 
+                ball.nextY < wallStart.y
               ) {
                 const distance = distance2D(wallStart, {
                   x: ball.nextX,
-                  y: ball.nextY 
+                  y: ball.nextY
                 });
-
                 if (distance < ballSize / 2 + wallW / 2) {
                   if (debugMode && wi > 4)
                     console.warn("too close v head", distance, ball);
-
                   const closest = closestItCanBe(wallStart, {
                     x: ball.nextX,
-                    y: ball.nextY 
+                    y: ball.nextY
                   });
-
                   const rolled = rollAroundCap(wallStart, {
                     x: closest.x,
                     y: closest.y,
                     velocityX: ball.velocityX,
-                    velocityY: ball.velocityY 
+                    velocityY: ball.velocityY
                   });
 
                   Object.assign(ball, rolled);
@@ -504,16 +493,15 @@ function main(timestamp) {
 
               if (
                 ball.nextY - ballSize / 2 <= wallEnd.y + wallW / 2 &&
-                ball.nextY > wallEnd.y 
+                ball.nextY > wallEnd.y
               ) {
                 const distance = distance2D(wallEnd, {
                   x: ball.nextX,
                   y: ball.nextY
                 });
-
                 if (distance < ballSize / 2 + wallW / 2) {
-                  if (debugMood && wi > 4) 
-                    console.warn("too close b tail", distance, ball);
+                  if (debugMode && wi > 4)
+                    console.warn("too close v tail", distance, ball);
 
                   const closest = closestItCanBe(wallEnd, {
                     x: ball.nextX,
@@ -523,7 +511,7 @@ function main(timestamp) {
                     x: closest.x,
                     y: closest.y,
                     velocityX: ball.velocityX,
-                    velocityY: ball.velocityY 
+                    velocityY: ball.velocityY
                   });
 
                   Object.assign(ball, rolled);
@@ -536,10 +524,10 @@ function main(timestamp) {
                 } else {
                   ball.nextX = wall.x + wallW / 2 + ballSize / 2;
                 }
-                ball.x - ball.nextX;
+                ball.x = ball.nextX;
                 ball.velocityX = -ball.velocityX / 3;
 
-                if (debugMode && wi > 4) 
+                if (debugMode && wi > 4)
                   console.error("crossing v line, HIT", ball);
               }
             }
@@ -550,7 +538,7 @@ function main(timestamp) {
           holes.forEach((hole, hi) => {
             const distance = distance2D(hole, {
               x: ball.nextX,
-              y: ball.nextY 
+              y: ball.nextY
             });
 
             if (distance <= holeSize / 2) {
@@ -565,7 +553,7 @@ function main(timestamp) {
       });
 
       balls.forEach(({ x, y }, index) => {
-        ballElements[index].style.cssText = `left: ${x}px; top: ${y}px;`;
+        ballElements[index].style.cssText = `left: ${x}px; top: ${y}px; `;
       });
     }
 
@@ -575,14 +563,13 @@ function main(timestamp) {
       )
     ) {
       noteElement.innerHTML = `Congrats, you did it!
-      ${!hardMode ? "<p>Press H for hard mode</p>" : ""}
-      <p>
-        Follow me 
-        <a href="https://twitter.com/HunorBorbely", target="_blank">
-          @HunorBorbely
-        </a>
-      </p>
-      `;
+        ${!hardMode ? "<p>Press H for hard mode</p>" : ""}
+        <p>
+          Follow me
+          <a href="https://twitter.com/HunorBorbely" , target="_blank"
+            >@HunorBorbely</a
+          >
+        </p>`;
       noteElement.style.opacity = 1;
       gameInProgress = false;
     } else {
@@ -592,9 +579,9 @@ function main(timestamp) {
   } catch (error) {
     if (error.message == "The ball fell into a hole") {
       noteElement.innerHTML = `A ball fell into a black hole! Press space to reset the game.
-      <p>
-        Back to easy? Press E 
-      </p>`;
+        <p>
+         Back to easy? Press E
+        </p>`;
       noteElement.style.opacity = 1;
       gameInProgress = false;
     } else throw error;
